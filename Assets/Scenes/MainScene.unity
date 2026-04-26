@@ -1441,8 +1441,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listGetData: {fileID: 757367460}
-  ScrollView: {fileID: 684938271}
-  AddPage: {fileID: 14718937}
+  scrollView: {fileID: 684938271}
+  topBar: {fileID: 6063789709314713806}
+  addPage: {fileID: 14718937}
   newArtifact_name: {fileID: 1378012900}
   newArtifact_description: {fileID: 1810259145}
   newArtifact_shUnit: {fileID: 1721838194}
@@ -5357,7 +5358,7 @@ GameObject:
   - component: {fileID: 7748002971502046783}
   - component: {fileID: 8628070095040497835}
   m_Layer: 5
-  m_Name: Intestazione
+  m_Name: TopBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

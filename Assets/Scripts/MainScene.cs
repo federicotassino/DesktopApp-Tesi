@@ -10,8 +10,9 @@ public class MainScene : MonoBehaviour
     ArtifactService artifactService;
 
     public ListGetData listGetData;
-    public GameObject ScrollView;
-    public GameObject AddPage;
+    public GameObject scrollView;
+    public GameObject topBar;
+    public GameObject addPage;
     public TMP_InputField newArtifact_name;
     public TMP_InputField newArtifact_description;
     public TMP_InputField newArtifact_shUnit;
@@ -21,7 +22,7 @@ public class MainScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        AddPage.SetActive(false);
+        addPage.SetActive(false);
         //addButton.enabled = false;
         emptyFieldsText.enabled = false;
 
@@ -92,8 +93,9 @@ public class MainScene : MonoBehaviour
 
             //reset di AddPage
             ResetAddPage();
-            AddPage.SetActive(false);
-            ScrollView.SetActive(true);
+            addPage.SetActive(false);
+            scrollView.SetActive(true);
+            topBar.SetActive(true);
         }
         else
         {
