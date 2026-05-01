@@ -65,24 +65,24 @@ public class ListGetData : MonoBehaviour
         {
             if (orderByName)
             { //itemData.Sort((x, y) => x.Name.CompareTo(y.Name));
-                itemData = itemData.OrderBy(x => x.Name).ThenBy(x => x.ShelvingUnit).ToList();
+                itemData = itemData.OrderBy(x => x.name).ThenBy(x => x.shelvingUnit).ToList();
             }
 
             if (orderByShUnit)
             { //itemData.Sort((x, y) => x.ShelvingUnit.CompareTo(y.ShelvingUnit));
-                itemData = itemData.OrderBy(x => x.ShelvingUnit).ThenBy(x => x.Name).ToList();
+                itemData = itemData.OrderBy(x => x.shelvingUnit).ThenBy(x => x.name).ToList();
             }
         }
         else
         {
             if (orderByName)
             { //itemData.Sort((x, y) => -x.Name.CompareTo(y.Name));
-                itemData = itemData.OrderByDescending(x => x.Name).ThenBy(x => x.ShelvingUnit).ToList();
+                itemData = itemData.OrderByDescending(x => x.name).ThenBy(x => x.shelvingUnit).ToList();
             }
 
             if (orderByShUnit)
             { //itemData.Sort((x, y) => -x.ShelvingUnit.CompareTo(y.ShelvingUnit));
-                itemData = itemData.OrderByDescending(x => x.ShelvingUnit).ThenBy(x => x.Name).ToList();
+                itemData = itemData.OrderByDescending(x => x.shelvingUnit).ThenBy(x => x.name).ToList();
             }
         }
     }

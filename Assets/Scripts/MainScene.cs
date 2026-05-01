@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainScene : MonoBehaviour
 {
-    ArtifactService artifactService;
+    APIService apiService;
 
     public ListGetData listGetData;
     public GameObject scrollView;
@@ -19,16 +20,24 @@ public class MainScene : MonoBehaviour
     //public Button addButton;
     public TMP_Text emptyFieldsText;
 
+    //private List<Artifact> artifacts = new();
+
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         addPage.SetActive(false);
         //addButton.enabled = false;
         emptyFieldsText.enabled = false;
 
-        artifactService = new ArtifactService();
+        apiService = new APIService();
 
-        var artifacts = artifactService.GetAllArtifacts();
+        //var artifacts = apiService.GetAllArtifacts();
+        List<Artifact> artifacts = await apiService.GetAllArtifactsAsync();
+        if (artifacts == null)
+        {
+            Debug.LogError("Artifacts null!");
+            return;
+        }
         ToScrollView(artifacts);
     }
 
@@ -67,42 +76,42 @@ public class MainScene : MonoBehaviour
     {
         Debug.Log("-----OnArtifactTableButtonClick-----");
 
-        artifactService.CreateArtifactTable();
+        //apiService.CreateArtifactTable();
     }
 
-    public void OnAddArtifactButtonClick()
-    {
-        Debug.Log("-----OnAddArtifactButtonClick-----");
+    //public void OnAddArtifactButtonClick()
+    //{
+    //    Debug.Log("-----OnAddArtifactButtonClick-----");
 
-        if (newArtifact_name.text != "" && newArtifact_description.text != "" && newArtifact_shUnit.text != "")
-        {
-            Artifact artifact = new Artifact
-            {
-                Name = newArtifact_name.text,
-                TextDescription = newArtifact_description.text,
-                ShelvingUnit = Int32.Parse(newArtifact_shUnit.text),
-            };
+    //    if (newArtifact_name.text != "" && newArtifact_description.text != "" && newArtifact_shUnit.text != "")
+    //    {
+    //        Artifact artifact = new Artifact
+    //        {
+    //            Name = newArtifact_name.text,
+    //            TextDescription = newArtifact_description.text,
+    //            ShelvingUnit = Int32.Parse(newArtifact_shUnit.text),
+    //        };
 
 
-            int pk = artifactService.AddArtifact(artifact);
+    //        int pk = apiService.AddArtifact(artifact);
 
-            Debug.Log("Primary key: " + pk);
+    //        Debug.Log("Primary key: " + pk);
 
-            var artifacts = artifactService.GetAllArtifacts();
-            ToScrollView(artifacts);
+    //        var artifacts = apiService.GetAllArtifacts();
+    //        ToScrollView(artifacts);
 
-            //reset di AddPage
-            ResetAddPage();
-            addPage.SetActive(false);
-            scrollView.SetActive(true);
-            topBar.SetActive(true);
-        }
-        else
-        {
-            emptyFieldsText.enabled = true;
-        }
+    //        //reset di AddPage
+    //        ResetAddPage();
+    //        addPage.SetActive(false);
+    //        scrollView.SetActive(true);
+    //        topBar.SetActive(true);
+    //    }
+    //    else
+    //    {
+    //        emptyFieldsText.enabled = true;
+    //    }
         
-    }
+    //}
 
     public void ResetAddPage()
     {
@@ -113,15 +122,16 @@ public class MainScene : MonoBehaviour
         emptyFieldsText.enabled = false;
     }
 
-    public void OnGetAllArtifactsButtonClick()
+    public async void OnGetAllArtifactsButtonClickAsync()
     {
-        var artifacts = artifactService.GetAllArtifacts();
+        //var artifacts = apiService.GetAllArtifacts();
+        List<Artifact> artifacts = await apiService.GetAllArtifactsAsync();
         ToScrollView(artifacts);
     }
 
     public void OnGeArtifactByNameButtonClick()
     {
-        var artifacts = artifactService.GetArtifactByName("Scarabeo");
-        ToConsole(artifacts.ToString());
+        //var artifacts = apiService.GetArtifactByName("Scarabeo");
+        //ToConsole(artifacts.ToString());
     }
 }

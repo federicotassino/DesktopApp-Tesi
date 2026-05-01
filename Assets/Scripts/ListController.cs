@@ -13,8 +13,8 @@ public class ListController : MonoBehaviour
 
     public void SetData(Artifact listItem)
     {  
-        Name.text = listItem.Name;
-        ShelvingUnit.text = listItem.ShelvingUnit.ToString();
-        Description.text = listItem.TextDescription;
+        Name.text = listItem.name;
+        ShelvingUnit.text = listItem.shelvingUnit.ToString();
+        Description.text = listItem.textDescription;
     }
 }
