@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class ListGetData : MonoBehaviour
 {
+    public MainScene mainScene;
     public GameObject itemPrefab;
     public GameObject itemPrefab2;
     public Transform contentTrf;
@@ -34,6 +35,7 @@ public class ListGetData : MonoBehaviour
         ReorderListView();
 
         bool isEven = true;
+        int index = 0;
 
         foreach (var item in itemData)
         {
@@ -45,9 +47,17 @@ public class ListGetData : MonoBehaviour
                 { obj = Instantiate(itemPrefab2, contentTrf); }
 
             ListController listController = obj.GetComponent<ListController>();
-            listController.SetData(item);
+            listController.mainScene = mainScene;
+            listController.deleteButton = obj.GetComponentsInChildren<Transform>()
+                .FirstOrDefault(x => x.name == "Delete Button")
+                .GetComponent<Button>();
+            listController.updateButton = obj.GetComponentsInChildren<Transform>()
+                .FirstOrDefault(x => x.name == "Update Button")
+                .GetComponent<Button>();
+            listController.SetData(item, index);
 
             isEven = !isEven;
+            index++;
         }
     }
 
