@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 public class APIService
 {
     private string baseUrl = "http://127.0.0.1:5000/dati";
+    private string shelfUrl = "http://127.0.0.1:5000/shelf";
 
     // =========================
     // GET ALL
@@ -164,6 +165,54 @@ public class APIService
 
             return JsonUtility.FromJson<Artifact>(responseJson);
         }
+    }
+
+    // ==========================================
+    // CREATE NEW STORAGE CONTAINER ELEMENT
+    // ==========================================
+    public async Task<StorageContainer> CreateShelf(StorageContainer container)
+    {
+        ShelfCreate dto = new ShelfCreate
+        {
+            name = container.shelfName,
+            worldTransform = "", // temporaneo
+
+            parentShelfId = container.parentID
+        };
+
+        string json = JsonUtility.ToJson(dto);
+
+        Debug.Log(json);
+
+        using var client = new UnityWebRequest(shelfUrl, "POST");
+
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+
+        client.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        client.downloadHandler = new DownloadHandlerBuffer();
+
+        client.SetRequestHeader(
+            "Content-Type",
+            "application/json"
+        );
+
+        var operation = client.SendWebRequest();
+
+        while (!operation.isDone)
+            await Task.Yield();
+
+        if (client.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(client.error);
+
+            Debug.LogError(client.downloadHandler.text);
+
+            return null;
+        }
+
+        return JsonUtility.FromJson<StorageContainer>(
+            client.downloadHandler.text
+        );
     }
 
 

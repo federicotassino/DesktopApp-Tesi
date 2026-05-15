@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
@@ -20,6 +21,9 @@ public class MainScene : MonoBehaviour
     public TMP_InputField newArtifact_shUnit;
     //public Button addButton;
     public TMP_Text emptyFieldsText;
+    public GameObject ShelfPage;
+    public TMP_InputField shelfNameTMP;
+    public TMP_InputField shelfParentIdTMP;
 
     private List<Artifact> artifacts = new();
     private Artifact selectedArtifact;
@@ -31,6 +35,7 @@ public class MainScene : MonoBehaviour
         artifactPage.SetActive(false);
         confirmDialog.SetActive(false);
         emptyFieldsText.enabled = false;
+        ShelfPage.SetActive(false);
 
         apiService = new APIService();
 
@@ -87,11 +92,13 @@ public class MainScene : MonoBehaviour
 
         if (newArtifact_name.text != "" && newArtifact_description.text != "" && newArtifact_shUnit.text != "")
         {
+            int shelfID = Int32.Parse(newArtifact_shUnit.text);
             Artifact newArtifact = new Artifact
             {
                 name = newArtifact_name.text,
                 textDescription = newArtifact_description.text,
-                shelvingUnit = Int32.Parse(newArtifact_shUnit.text),
+                shelvingUnit = shelfID,
+                lastShelvingUnit = shelfID
             };
 
             Artifact created = await apiService.CreateArtifactAsync(newArtifact);
@@ -197,6 +204,7 @@ public class MainScene : MonoBehaviour
         selectedArtifact.name = newArtifact_name.text;
         selectedArtifact.textDescription = newArtifact_description.text;
         selectedArtifact.shelvingUnit = Int32.Parse(newArtifact_shUnit.text);
+        selectedArtifact.lastShelvingUnit = Int32.Parse(newArtifact_shUnit.text);
 
         Artifact updated = await apiService.UpdateArtifactAsync(selectedArtifact);
 
@@ -222,5 +230,44 @@ public class MainScene : MonoBehaviour
     {
         //var artifacts = apiService.GetArtifactByName("Scarabeo");
         //ToConsole(artifacts.ToString());
+    }
+
+    public void OnCreateShelf()
+    {
+        string name = shelfNameTMP.text;
+            //ShelfPage.transform
+            //.Find("Name_txt")
+            //.GetComponent<TMP_InputField>()
+            //.text;
+
+        string parentText = shelfParentIdTMP.text;
+        //ShelfPage.transform
+        //    .Find("ParentID_txt")
+        //    .GetComponent<TMP_InputField>()
+        //    .text;
+
+        int parentID = -1;
+
+        if (!string.IsNullOrEmpty(parentText))
+        {
+            parentID = int.Parse(parentText);
+        }
+
+        StorageContainer dto = new StorageContainer
+        {
+            shelfName = name,
+            worldTransform = "",
+            parentID = parentID,
+        };
+
+        _ = apiService.CreateShelf(dto);
+
+        ResetShelfUI();
+    }
+
+    private void ResetShelfUI()
+    {
+        shelfNameTMP.text = "";
+        shelfParentIdTMP.text = "";
     }
 }
