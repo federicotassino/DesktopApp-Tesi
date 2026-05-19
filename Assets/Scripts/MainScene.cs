@@ -65,7 +65,7 @@ public class MainScene : MonoBehaviour
         listGetData.itemData.Clear();
         foreach (var artifact in artifacts)
         {
-            ToConsole(artifact.ToString());
+            //ToConsole(artifact.ToString());
 
             //ScrollView
             listGetData.itemData.Add(artifact);
@@ -138,7 +138,8 @@ public class MainScene : MonoBehaviour
     public async void OnGetAllArtifactsButtonClickAsync()
     {
         //var artifacts = apiService.GetAllArtifacts();
-        List<Artifact> artifacts = await apiService.GetAllArtifactsAsync();
+        artifacts.Clear();
+        artifacts = await apiService.GetAllArtifactsAsync();
         ToScrollView(artifacts);
     }
 
@@ -269,5 +270,22 @@ public class MainScene : MonoBehaviour
     {
         shelfNameTMP.text = "";
         shelfParentIdTMP.text = "";
+    }
+
+    public void UpdateArtifact(Artifact artifact)
+    {
+        Debug.Log("Chiamata funzione UpdateArtifact");
+
+        int index = artifacts.FindIndex(x => x.id == artifact.id);
+        if (index != -1)
+        {
+            artifacts[index] = artifact;
+        }
+        ToScrollView(artifacts);
+    }
+
+    public void UpdateShelf(StorageContainer shelf)
+    {
+        Debug.Log("Chiamata funzione UpdateShelf");
     }
 }

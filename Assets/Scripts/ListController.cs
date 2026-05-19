@@ -15,7 +15,7 @@ public class ListController : MonoBehaviour
     public Button updateButton;
 
     public void SetData(Artifact listItem, int index)
-    {  
+    {
         Name.text = listItem.name;
         ShelvingUnit.text = listItem.shelvingUnit.ToString();
         Description.text = listItem.textDescription;
