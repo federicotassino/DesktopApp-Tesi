@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -270,6 +269,9 @@ public class MainScene : MonoBehaviour
     {
         shelfNameTMP.text = "";
         shelfParentIdTMP.text = "";
+        ShelfPage.SetActive(false);
+        scrollView.SetActive(true);
+        topBar.SetActive(true);
     }
 
     public void UpdateArtifact(Artifact artifact)
