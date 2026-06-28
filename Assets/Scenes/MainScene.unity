@@ -679,7 +679,7 @@ RectTransform:
   m_GameObject: {fileID: 111066062}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.0828557, y: 3.157053, z: 3.157053}
+  m_LocalScale: {x: 9.403887, y: 5.8409233, z: 5.8409233}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1664044531}
@@ -2991,8 +2991,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -120.6}
-  m_SizeDelta: {x: 1852.5, y: 850}
+  m_AnchoredPosition: {x: 0, y: -101.962494}
+  m_SizeDelta: {x: 1852.5, y: 812.7249}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &684938274
 MonoBehaviour:
@@ -3774,13 +3774,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainScene: {fileID: 519420033}
   itemPrefab: {fileID: 8297083583945799723, guid: 463002c05c82b9b4d8a622a014c1bd45, type: 3}
-  itemPrefab2: {fileID: 8297083583945799723, guid: 05d3ba7f9d4b5a442a12179dc3687c48, type: 3}
+  itemPrefab2: {fileID: 8297083583945799723, guid: 5c2cedce55f27004d9303e4868bce622, type: 3}
   contentTrf: {fileID: 688218411}
   itemData: []
   sourceImageName: {fileID: 1132393762}
   sourceImageUnit: {fileID: 2079375890}
-  downArrow: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
-  upArrow: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  downArrow: {fileID: 21300000, guid: 97e37e84340b9a7449c3aea2644f67cd, type: 3}
+  upArrow: {fileID: 21300000, guid: 4c149c6e222d0214f9ccd1c30a1aae82, type: 3}
   noArrow: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &875277519
 GameObject:
@@ -4165,7 +4165,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1313472246}
   m_HandleRect: {fileID: 1313472245}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4376,9 +4376,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 97e37e84340b9a7449c3aea2644f67cd, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -5298,7 +5298,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -574, y: -349}
+  m_AnchoredPosition: {x: -574, y: -309}
   m_SizeDelta: {x: 362.5338, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1358562489
@@ -6594,7 +6594,7 @@ RectTransform:
   m_GameObject: {fileID: 1664044530}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1515, y: 0.1515, z: 0.1515}
+  m_LocalScale: {x: 0.1515, y: 0.2, z: 0.1515}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 111066063}
@@ -7923,7 +7923,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2053508241
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7939,10 +7939,10 @@ RectTransform:
   - {fileID: 1935628319}
   m_Father: {fileID: 1453604774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 240, y: -87.6}
+  m_SizeDelta: {x: 480, y: 175.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2053508242
 MonoBehaviour:
@@ -8155,7 +8155,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -8340,7 +8340,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 345}
-  m_SizeDelta: {x: 1157.28, y: 0}
+  m_SizeDelta: {x: 1157.28, y: 42.35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2315372084776680654
 GameObject:
@@ -8822,7 +8822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 2
+  m_VerticalFit: 0
 --- !u!114 &8628070095040497835
 MonoBehaviour:
   m_ObjectHideFlags: 0
