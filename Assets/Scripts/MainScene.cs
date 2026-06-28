@@ -258,9 +258,14 @@ public class MainScene : MonoBehaviour
             shelfName = name,
             worldTransform = "",
             parentID = parentID,
+            isRoom = false,
+            roomWidth = 0,
+            roomHeight = 0,
+            roomDepth = 0,
+            roomCenterPose = "",
         };
 
-        _ = apiService.CreateShelf(dto);
+    _ = apiService.CreateShelf(dto);
 
         ResetShelfUI();
     }

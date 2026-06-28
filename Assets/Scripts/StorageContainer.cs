@@ -11,6 +11,22 @@ public class StorageContainer
 
     public int parentID;
 
+    public bool isShelf = false;
+
+    // indica se è una stanza (con marker)
+    public bool isRoom = false;
+
+    // riferimento al marker ArUco
+    public int markerId;
+
+    // dimensioni stanza per collider
+    public float roomWidth;
+    public float roomHeight;
+    public float roomDepth;
+
+    // coordinate centro stanza
+    public string roomCenterPose;
+
 
     public override string ToString()
     {
