@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class ShelfCreate
 {
+    public int id;
     public string name;
     public string worldTransform;
     public int parentShelfId;

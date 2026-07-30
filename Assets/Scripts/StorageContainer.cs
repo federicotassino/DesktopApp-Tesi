@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class StorageContainer
 {
+    public int id;
     public string shelfName;
 
     public string worldTransform;

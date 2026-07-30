@@ -167,6 +167,36 @@ public class APIService
         }
     }
 
+    // =========================
+    // GET ALL SHELVES
+    // =========================
+    public async Task<List<StorageContainer>> GetAllShelvesAsync()
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(shelfUrl))
+        {
+            var operation = request.SendWebRequest();
+
+            while (!operation.isDone)
+                await Task.Yield();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(request.error);
+                Debug.LogError(request.downloadHandler.text);
+                return null;
+            }
+
+            string json = request.downloadHandler.text;
+
+            string wrappedJson = "{ \"items\": " + json + " }";
+
+            StorageContainerListWrapper result =
+                JsonUtility.FromJson<StorageContainerListWrapper>(wrappedJson);
+
+            return result.items;
+        }
+    }
+
     // ==========================================
     // CREATE NEW STORAGE CONTAINER ELEMENT
     // ==========================================
@@ -174,6 +204,7 @@ public class APIService
     {
         ShelfCreate dto = new ShelfCreate
         {
+            id = container.id,
             name = container.shelfName,
             worldTransform = "",
             parentShelfId = container.parentID,
@@ -254,5 +285,11 @@ public class APIService
     private class ArtifactListWrapper
     {
         public List<Artifact> items;
+    }
+
+    [System.Serializable]
+    public class StorageContainerListWrapper
+    {
+        public List<StorageContainer> items;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -28,13 +29,25 @@ public class MainScene : MonoBehaviour
     private Artifact selectedArtifact;
     private string confirmText = "Eliminare l'elemento ";
 
+    [Header("Hierarchy")]
+    public GameObject hierarchyPage;
+    public Transform hierarchyContent;
+    public GameObject treeNodePrefab;
+    public GameObject nodeMenu;
+
+
+    private StorageContainer selectedShelf;
+
     // Start is called before the first frame update
     async void Start()
     {
+        scrollView.SetActive(true);
+        topBar.SetActive(true);
         artifactPage.SetActive(false);
         confirmDialog.SetActive(false);
         emptyFieldsText.enabled = false;
         ShelfPage.SetActive(false);
+        hierarchyPage.SetActive(false);
 
         apiService = new APIService();
 
@@ -78,16 +91,30 @@ public class MainScene : MonoBehaviour
         Debug.Log(msg);
     }
 
-    public void OnArtifactTableButtonClick()
-    {
-        Debug.Log("-----OnArtifactTableButtonClick-----");
 
-        //apiService.CreateArtifactTable();
+    #region[Handle UI Buttons]
+    public async void OnGetAllArtifactsButtonClickAsync()
+    {
+        hierarchyPage.SetActive(false);
+        scrollView.SetActive(true);
+        topBar.SetActive(true);
+        artifactPage.SetActive(false);
+        ShelfPage.SetActive(false);
+
+        //var artifacts = apiService.GetAllArtifacts();
+        artifacts.Clear();
+        artifacts = await apiService.GetAllArtifactsAsync();
+        ToScrollView(artifacts);
     }
 
     public async void OnAddArtifactButtonClickAsync()
     {
         Debug.Log("-----OnAddArtifactButtonClick-----");
+        hierarchyPage.SetActive(false);
+        scrollView.SetActive(false);
+        topBar.SetActive(false);
+        artifactPage.SetActive(true);
+        ShelfPage.SetActive(false);
 
         if (newArtifact_name.text != "" && newArtifact_description.text != "" && newArtifact_shUnit.text != "")
         {
@@ -124,6 +151,97 @@ public class MainScene : MonoBehaviour
         }
     }
 
+    public void OnAddArtifactButtonClick()
+    {
+        Debug.Log("-----OnAddArtifactButtonClick-----");
+        hierarchyPage.SetActive(false);
+        scrollView.SetActive(false);
+        topBar.SetActive(false);
+        artifactPage.SetActive(true);
+        ShelfPage.SetActive(false);
+    }
+
+    public void OnAddShelfButtonClick()
+    {
+        Debug.Log("-----OnAddShelfButtonClick-----");
+        hierarchyPage.SetActive(false);
+        scrollView.SetActive(false);
+        topBar.SetActive(false);
+        artifactPage.SetActive(false);
+        ShelfPage.SetActive(true);
+    }
+
+    public async void OnHierarchyButtonClick()
+    {
+        Debug.Log("-----OnHierarchyButtonClick-----");
+        hierarchyPage.SetActive(true);
+        scrollView.SetActive(false);
+        topBar.SetActive(false);
+        artifactPage.SetActive(false);
+        ShelfPage.SetActive(false);
+
+        List<StorageContainer> shelves =
+            await apiService.GetAllShelvesAsync();
+
+        BuildHierarchy(shelves);
+    }
+
+    public void OnArtifactTableButtonClick()
+    {
+        Debug.Log("-----OnArtifactTableButtonClick-----");
+
+        //apiService.CreateArtifactTable();
+    }
+
+    #endregion[Handle UI Buttons]
+
+
+    //////////////////////////////////////
+
+    private void BuildHierarchy(List<StorageContainer> shelves)
+    {
+        foreach (Transform child in hierarchyContent)
+            Destroy(child.gameObject);
+
+        foreach (StorageContainer root in shelves)
+        {
+            Debug.Log($"{root}");
+        }
+        foreach (StorageContainer root in shelves.Where(x => x.parentID == -1))
+        {
+            Debug.Log($"PROVA");
+            CreateNode(root, shelves, 0);
+        }
+    }
+
+    private void CreateNode(StorageContainer shelf, List<StorageContainer> allShelves, int depth)
+    {
+        GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
+
+        node.GetComponentInChildren<TMP_Text>().text =
+            new string(' ', depth * 4) + shelf.shelfName;
+
+        node.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnShelfNodeClicked(shelf);
+        });
+
+        foreach (StorageContainer child in
+                 allShelves.Where(x => x.parentID == shelf.id))
+        {
+            CreateNode(child, allShelves, depth + 1);
+        }
+    }
+
+    private void OnShelfNodeClicked(StorageContainer shelf)
+    {
+        selectedShelf = shelf;
+
+        nodeMenu.SetActive(true);
+    }
+
+    //////////////////////////////////////
+
     public void ResetArtifactPage()
     {
         newArtifact_name.text = "";
@@ -134,13 +252,6 @@ public class MainScene : MonoBehaviour
         artifactPage.transform.Find("UpdateButton").gameObject.SetActive(false);
     }
 
-    public async void OnGetAllArtifactsButtonClickAsync()
-    {
-        //var artifacts = apiService.GetAllArtifacts();
-        artifacts.Clear();
-        artifacts = await apiService.GetAllArtifactsAsync();
-        ToScrollView(artifacts);
-    }
 
     public void DeleteConfirmed(Artifact artifact)
     {
@@ -252,6 +363,8 @@ public class MainScene : MonoBehaviour
         {
             parentID = int.Parse(parentText);
         }
+
+        Debug.Log($"---->Creating shelf with name: {name}, parentID: {parentID}");
 
         StorageContainer dto = new StorageContainer
         {
