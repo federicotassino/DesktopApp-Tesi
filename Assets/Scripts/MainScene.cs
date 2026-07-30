@@ -259,6 +259,7 @@ public class MainScene : MonoBehaviour
             worldTransform = "",
             parentID = parentID,
             isRoom = false,
+            markerId = -1,
             roomWidth = 0,
             roomHeight = 0,
             roomDepth = 0,

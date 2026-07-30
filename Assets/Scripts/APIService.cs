@@ -175,9 +175,14 @@ public class APIService
         ShelfCreate dto = new ShelfCreate
         {
             name = container.shelfName,
-            worldTransform = "", // temporaneo
-
-            parentShelfId = container.parentID
+            worldTransform = "",
+            parentShelfId = container.parentID,
+            isRoom = container.isRoom,
+            markerId = container.markerId,
+            roomWidth = container.roomWidth,
+            roomHeight = container.roomHeight,
+            roomDepth = container.roomDepth,
+            roomCenterPose = container.roomCenterPose,
         };
 
         string json = JsonUtility.ToJson(dto);
