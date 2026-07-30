@@ -207,7 +207,7 @@ public class MainScene : MonoBehaviour
         {
             Debug.Log($"{root}");
         }
-        foreach (StorageContainer root in shelves.Where(x => x.parentID == -1))
+        foreach (StorageContainer root in shelves.Where(x => x.parentShelfId == -1))
         {
             Debug.Log($"PROVA");
             CreateNode(root, shelves, 0);
@@ -227,7 +227,7 @@ public class MainScene : MonoBehaviour
         });
 
         foreach (StorageContainer child in
-                 allShelves.Where(x => x.parentID == shelf.id))
+                 allShelves.Where(x => x.parentShelfId == shelf.id))
         {
             CreateNode(child, allShelves, depth + 1);
         }
@@ -370,7 +370,7 @@ public class MainScene : MonoBehaviour
         {
             shelfName = name,
             worldTransform = "",
-            parentID = parentID,
+            parentShelfId = parentID,
             isRoom = false,
             markerId = -1,
             roomWidth = 0,

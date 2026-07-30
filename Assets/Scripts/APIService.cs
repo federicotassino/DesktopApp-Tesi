@@ -207,7 +207,7 @@ public class APIService
             id = container.id,
             name = container.shelfName,
             worldTransform = "",
-            parentShelfId = container.parentID,
+            parentShelfId = container.parentShelfId,
             isRoom = container.isRoom,
             markerId = container.markerId,
             roomWidth = container.roomWidth,

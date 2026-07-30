@@ -10,7 +10,7 @@ public class StorageContainer
 
     public string worldTransform;
 
-    public int parentID;
+    public int parentShelfId;
 
     public bool isShelf = false;
 
@@ -31,6 +31,6 @@ public class StorageContainer
 
     public override string ToString()
     {
-        return string.Format("[Shelf: Name={0},,  worldTransform={1}  ParentID={2}]", shelfName, worldTransform, parentID);
+        return string.Format("[Shelf: Name={0},,  worldTransform={1}  ParentID={2}]", shelfName, worldTransform, parentShelfId);
     }
 }
