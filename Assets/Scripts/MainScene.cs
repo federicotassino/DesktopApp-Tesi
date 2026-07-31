@@ -34,6 +34,7 @@ public class MainScene : MonoBehaviour
     public Transform hierarchyContent;
     public GameObject treeNodePrefab;
     public GameObject nodeMenu;
+    public GameObject indentPrefab;
 
 
     private StorageContainer selectedShelf;
@@ -203,13 +204,8 @@ public class MainScene : MonoBehaviour
         foreach (Transform child in hierarchyContent)
             Destroy(child.gameObject);
 
-        foreach (StorageContainer root in shelves)
-        {
-            Debug.Log($"{root}");
-        }
         foreach (StorageContainer root in shelves.Where(x => x.parentShelfId == -1))
         {
-            Debug.Log($"PROVA");
             CreateNode(root, shelves, 0);
         }
     }
@@ -218,16 +214,27 @@ public class MainScene : MonoBehaviour
     {
         GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
 
-        node.GetComponentInChildren<TMP_Text>().text =
-            new string(' ', depth * 4) + shelf.shelfName;
+        // Aggiunge gli indent all'inizio
+        for (int i = 0; i < depth; i++)
+        {
+            GameObject indent = Instantiate(indentPrefab, node.transform);
 
-        node.GetComponent<Button>().onClick.AddListener(() =>
+            // lo mette prima degli altri elementi
+            indent.transform.SetSiblingIndex(0);
+        }
+
+        // Testo
+        Debug.Log($"Name shelf: {shelf.name}");
+        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = shelf.name;
+
+        // Click
+        node.GetComponentsInChildren<Button>().FirstOrDefault().onClick.AddListener(() =>
         {
             OnShelfNodeClicked(shelf);
         });
 
-        foreach (StorageContainer child in
-                 allShelves.Where(x => x.parentShelfId == shelf.id))
+        // Figli
+        foreach (StorageContainer child in allShelves.Where(x => x.parentShelfId == shelf.id))
         {
             CreateNode(child, allShelves, depth + 1);
         }
@@ -368,7 +375,7 @@ public class MainScene : MonoBehaviour
 
         StorageContainer dto = new StorageContainer
         {
-            shelfName = name,
+            name = name,
             worldTransform = "",
             parentShelfId = parentID,
             isRoom = false,

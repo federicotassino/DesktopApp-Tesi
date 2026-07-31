@@ -6,7 +6,7 @@ using UnityEngine;
 public class StorageContainer
 {
     public int id;
-    public string shelfName;
+    public string name;
 
     public string worldTransform;
 
@@ -31,6 +31,6 @@ public class StorageContainer
 
     public override string ToString()
     {
-        return string.Format("[Shelf: Name={0},,  worldTransform={1}  ParentID={2}]", shelfName, worldTransform, parentShelfId);
+        return string.Format("[Shelf: Name={0},,  worldTransform={1}  ParentID={2}]", name, worldTransform, parentShelfId);
     }
 }

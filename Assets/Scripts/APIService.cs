@@ -205,7 +205,7 @@ public class APIService
         ShelfCreate dto = new ShelfCreate
         {
             id = container.id,
-            name = container.shelfName,
+            name = container.name,
             worldTransform = "",
             parentShelfId = container.parentShelfId,
             isRoom = container.isRoom,
