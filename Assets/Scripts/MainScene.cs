@@ -35,6 +35,7 @@ public class MainScene : MonoBehaviour
     public GameObject treeNodePrefab;
     public GameObject nodeMenu;
     public GameObject indentPrefab;
+    public GameObject createShelfButton;
 
 
     private StorageContainer selectedShelf;
@@ -58,6 +59,12 @@ public class MainScene : MonoBehaviour
             Debug.LogError("Artifacts null!");
             return;
         }
+
+        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateShelf();
+        });
+
         ToScrollView(artifacts);
     }
 
@@ -172,6 +179,7 @@ public class MainScene : MonoBehaviour
         ShelfPage.SetActive(true);
     }
 
+
     public async void OnHierarchyButtonClick()
     {
         Debug.Log("-----OnHierarchyButtonClick-----");
@@ -194,6 +202,25 @@ public class MainScene : MonoBehaviour
         //apiService.CreateArtifactTable();
     }
 
+    public void OnCloseNodeMenu()
+    {
+        Debug.Log("-----OnCloseNodeMenu-----");
+        nodeMenu.SetActive(false);
+    }
+
+    public void OnAddShelfFromHierarchy()
+    {
+        Debug.Log("-----OnAddShelfFromHierarchy-----");
+        nodeMenu.SetActive(false);
+
+        OnAddShelfButtonClick();
+
+        createShelfButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateShelfFromHierarchy();
+        });
+    }
     #endregion[Handle UI Buttons]
 
 
@@ -245,6 +272,7 @@ public class MainScene : MonoBehaviour
         selectedShelf = shelf;
 
         nodeMenu.SetActive(true);
+        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = shelf.name;
     }
 
     //////////////////////////////////////
@@ -356,28 +384,13 @@ public class MainScene : MonoBehaviour
             //ShelfPage.transform
             //.Find("Name_txt")
             //.GetComponent<TMP_InputField>()
-            //.text;
-
-        string parentText = shelfParentIdTMP.text;
-        //ShelfPage.transform
-        //    .Find("ParentID_txt")
-        //    .GetComponent<TMP_InputField>()
-        //    .text;
-
-        int parentID = -1;
-
-        if (!string.IsNullOrEmpty(parentText))
-        {
-            parentID = int.Parse(parentText);
-        }
-
-        Debug.Log($"---->Creating shelf with name: {name}, parentID: {parentID}");
+            //.text
 
         StorageContainer dto = new StorageContainer
         {
             name = name,
             worldTransform = "",
-            parentShelfId = parentID,
+            parentShelfId = -1, // By default create a shelf with no parent (top of the hierarchy).
             isRoom = false,
             markerId = -1,
             roomWidth = 0,
@@ -386,9 +399,42 @@ public class MainScene : MonoBehaviour
             roomCenterPose = "",
         };
 
-    _ = apiService.CreateShelf(dto);
+        _ = apiService.CreateShelf(dto);
 
         ResetShelfUI();
+    }
+
+    public void OnCreateShelfFromHierarchy()
+    {
+        string name = shelfNameTMP.text;
+        //ShelfPage.transform
+        //.Find("Name_txt")
+        //.GetComponent<TMP_InputField>()
+        //.text
+        int parentId = selectedShelf != null ? selectedShelf.id : -1;
+
+        StorageContainer dto = new StorageContainer
+        {
+            name = name,
+            worldTransform = "",
+            parentShelfId = parentId,
+            isRoom = false,
+            markerId = -1,
+            roomWidth = 0,
+            roomHeight = 0,
+            roomDepth = 0,
+            roomCenterPose = "",
+        };
+
+        _ = apiService.CreateShelf(dto);
+
+        ResetShelfUI();
+
+        createShelfButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateShelf();
+        });
     }
 
     private void ResetShelfUI()
