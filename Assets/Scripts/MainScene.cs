@@ -36,6 +36,7 @@ public class MainScene : MonoBehaviour
     public GameObject nodeMenu;
     public GameObject indentPrefab;
     public GameObject createShelfButton;
+    public GameObject createArtifactButton;
 
 
     private StorageContainer selectedShelf;
@@ -63,6 +64,11 @@ public class MainScene : MonoBehaviour
         createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
         {
             OnCreateShelf();
+        });
+
+        createArtifactButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateArtifactButtonClick();
         });
 
         ToScrollView(artifacts);
@@ -115,7 +121,19 @@ public class MainScene : MonoBehaviour
         ToScrollView(artifacts);
     }
 
-    public async void OnAddArtifactButtonClickAsync()
+    public void OnCreateArtifactButtonClick()
+    {
+        Debug.Log("-----OnAddArtifactButtonClick-----");
+        AddArtifactAsync(-1);
+    }
+
+    public void OnCreateArtifactButtonClickFromHierarchy()
+    {
+        Debug.Log("-----OnAddArtifactButtonClickFromHierarchy-----");
+        AddArtifactAsync(selectedShelf.id);
+    }
+
+    public async void AddArtifactAsync(int _shelfID)
     {
         Debug.Log("-----OnAddArtifactButtonClick-----");
         hierarchyPage.SetActive(false);
@@ -124,9 +142,9 @@ public class MainScene : MonoBehaviour
         artifactPage.SetActive(true);
         ShelfPage.SetActive(false);
 
-        if (newArtifact_name.text != "" && newArtifact_description.text != "" && newArtifact_shUnit.text != "")
+        if (newArtifact_name.text != "" && newArtifact_description.text != "")
         {
-            int shelfID = Int32.Parse(newArtifact_shUnit.text);
+            int shelfID = _shelfID;
             Artifact newArtifact = new Artifact
             {
                 name = newArtifact_name.text,
@@ -157,6 +175,12 @@ public class MainScene : MonoBehaviour
         {
             emptyFieldsText.enabled = true;
         }
+
+        createArtifactButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createArtifactButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateArtifactButtonClick();
+        });
     }
 
     public void OnAddArtifactButtonClick()
@@ -221,6 +245,20 @@ public class MainScene : MonoBehaviour
             OnCreateShelfFromHierarchy();
         });
     }
+
+    public void OnAddArtifactFromHierarchy()
+    {
+        Debug.Log("-----OnAddArtifactFromHierarchy-----");
+        nodeMenu.SetActive(false);
+
+        OnAddArtifactButtonClick();
+
+        createArtifactButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createArtifactButton.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnCreateArtifactButtonClickFromHierarchy();
+        });
+    }
     #endregion[Handle UI Buttons]
 
 
@@ -251,8 +289,7 @@ public class MainScene : MonoBehaviour
         }
 
         // Testo
-        Debug.Log($"Name shelf: {shelf.name}");
-        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = shelf.name;
+        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = $"{shelf.name} ({shelf.id})";
 
         // Click
         node.GetComponentsInChildren<Button>().FirstOrDefault().onClick.AddListener(() =>

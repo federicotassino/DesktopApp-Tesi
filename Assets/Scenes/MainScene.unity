@@ -929,7 +929,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -520, y: -356}
+  m_AnchoredPosition: {x: -520, y: -303}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &160900333
@@ -3273,6 +3273,7 @@ MonoBehaviour:
   nodeMenu: {fileID: 1705925444}
   indentPrefab: {fileID: 5553311954350919900, guid: 4c3619d2fce2df245be77d64d1d22ff1, type: 3}
   createShelfButton: {fileID: 1244898191}
+  createArtifactButton: {fileID: 160900331}
 --- !u!1 &520504110
 GameObject:
   m_ObjectHideFlags: 0
@@ -5199,7 +5200,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Aggiungi
+  m_text: 'Add Artifact
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5586,7 +5589,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 519420033}
         m_TargetAssemblyTypeName: MainScene, Assembly-CSharp
-        m_MethodName: OnAddArtifactButtonClick
+        m_MethodName: OnAddArtifactFromHierarchy
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6813,7 +6816,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -574, y: -309}
+  m_AnchoredPosition: {x: -574, y: -180}
   m_SizeDelta: {x: 362.5338, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1358562489
@@ -6996,7 +6999,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 151908434}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9989311
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -9102,7 +9105,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1721838193
 RectTransform:
   m_ObjectHideFlags: 0
