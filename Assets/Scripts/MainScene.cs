@@ -310,7 +310,7 @@ public class MainScene : MonoBehaviour
         List<Artifact> artifacts = await GetArtifactsInContainer(container);
 
         nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text =
-            $"{container.name} ({container.id})\nNumber of Artifacts: {artifacts.Count}";
+            $"{container.name} (ID: {container.id})\nNumber of Artifacts: {artifacts.Count}";
     }
     #endregion[Handle UI Buttons]
 
