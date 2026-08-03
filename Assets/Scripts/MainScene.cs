@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -31,8 +32,16 @@ public class MainScene : MonoBehaviour
     public GameObject treeNodePrefab;
     public GameObject nodeMenu;
     public GameObject indentPrefab;
+
+    [Header("Container")]
     public GameObject createContainerButton;
     public GameObject createArtifactButton;
+    public GameObject roomSizeInputFields;
+    public Toggle isRoomToggle;
+    public TMP_InputField h_input;
+    public TMP_InputField w_input;
+    public TMP_InputField d_input;
+    public TMP_Text errorText;
 
 
     private StorageContainer selectedContainer;
@@ -48,6 +57,8 @@ public class MainScene : MonoBehaviour
         containerPage.SetActive(false);
         hierarchyPage.SetActive(false);
         nodeMenu.SetActive(false);
+        roomSizeInputFields.SetActive(false);
+        errorText.gameObject.SetActive(false);
 
         apiService = new APIService();
 
@@ -198,6 +209,12 @@ public class MainScene : MonoBehaviour
         topBar.SetActive(false);
         artifactPage.SetActive(false);
         containerPage.SetActive(true);
+
+        isRoomToggle.isOn = false;
+        roomSizeInputFields.SetActive(false);
+        h_input.text = "";
+        w_input.text = "";
+        d_input.text = "";
     }
 
 
@@ -255,6 +272,12 @@ public class MainScene : MonoBehaviour
         {
             OnCreateArtifactButtonClickFromHierarchy();
         });
+    }
+
+    public void OnIsRoomToggled()
+    {
+        Debug.Log("-----OnIsRoomToggled-----");
+        roomSizeInputFields.SetActive(isRoomToggle.isOn);
     }
     #endregion[Handle UI Buttons]
 
@@ -414,49 +437,52 @@ public class MainScene : MonoBehaviour
 
     public void OnCreateContainer()
     {
-        string name = containerNameTMP.text;
-            //ShelfPage.transform
-            //.Find("Name_txt")
-            //.GetComponent<TMP_InputField>()
-            //.text
-
-        StorageContainer dto = new StorageContainer
-        {
-            name = name,
-            worldTransform = "",
-            parentShelfId = -1, // By default create a shelf with no parent (top of the hierarchy).
-            isRoom = false,
-            markerId = -1,
-            roomWidth = 0,
-            roomHeight = 0,
-            roomDepth = 0,
-            roomCenterPose = "",
-        };
-
-        _ = apiService.CreateShelf(dto);
-
-        ResetShelfUI();
+        CreateContainer(-1);
     }
 
     public void OnCreateContainerFromHierarchy()
     {
+        int parentId = selectedContainer != null ? selectedContainer.id : -1;
+
+        CreateContainer(parentId);
+    }
+
+    public void CreateContainer(int _parentID)
+    {
+        errorText.gameObject.SetActive(false);
         string name = containerNameTMP.text;
         //ShelfPage.transform
         //.Find("Name_txt")
         //.GetComponent<TMP_InputField>()
         //.text
-        int parentId = selectedContainer != null ? selectedContainer.id : -1;
+
+        float width = 0f;
+        float height = 0f;
+        float depth = 0f;
+
+        if (isRoomToggle.isOn)
+        {
+            if (!float.TryParse(w_input.text, NumberStyles.Float, CultureInfo.InvariantCulture, out width) ||
+                !float.TryParse(h_input.text, NumberStyles.Float, CultureInfo.InvariantCulture, out height) ||
+                !float.TryParse(d_input.text, NumberStyles.Float, CultureInfo.InvariantCulture, out depth))
+            {
+                Debug.LogError("Dimensioni non valide.");
+                errorText.text = "Invalid dimensions. Please enter valid numbers for width, height, and depth.";
+                errorText.gameObject.SetActive(true);
+                return;
+            }
+        }
 
         StorageContainer dto = new StorageContainer
         {
             name = name,
             worldTransform = "",
-            parentShelfId = parentId,
-            isRoom = false,
+            parentShelfId = _parentID,
+            isRoom = isRoomToggle,
             markerId = -1,
-            roomWidth = 0,
-            roomHeight = 0,
-            roomDepth = 0,
+            roomWidth = width,
+            roomHeight = height,
+            roomDepth = depth,
             roomCenterPose = "",
         };
 
