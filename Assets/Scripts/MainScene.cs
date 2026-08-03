@@ -280,6 +280,38 @@ public class MainScene : MonoBehaviour
         Debug.Log("-----OnIsRoomToggled-----");
         roomSizeInputFields.SetActive(isRoomToggle.isOn);
     }
+
+    public async void OnDeleteContainerClicked()
+    {
+        if (selectedContainer == null)
+            return;
+
+        bool success = await apiService.DeleteContainerAsync(selectedContainer.id);
+
+        if (!success)
+            return;
+
+        // Aggiorna la gerarchia
+        List<StorageContainer> shelves =
+            await apiService.GetAllShelvesAsync();
+
+        BuildHierarchy(shelves);
+
+        nodeMenu.SetActive(false);
+
+        selectedContainer = null;
+    }
+
+    private async void OnContainerNodeClicked(StorageContainer container)
+    {
+        selectedContainer = container;
+
+        nodeMenu.SetActive(true);
+        List<Artifact> artifacts = await GetArtifactsInContainer(container);
+
+        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text =
+            $"{container.name} ({container.id})\nNumber of Artifacts: {artifacts.Count}";
+    }
     #endregion[Handle UI Buttons]
 
 
@@ -323,17 +355,6 @@ public class MainScene : MonoBehaviour
         {
             CreateNode(child, allShelves, depth + 1);
         }
-    }
-
-    private async void OnContainerNodeClicked(StorageContainer container)
-    {
-        selectedContainer = container;
-
-        nodeMenu.SetActive(true);
-        List<Artifact> artifacts = await GetArtifactsInContainer(container);
-
-        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = 
-            $"{container.name} ({container.id})\nNumber of Artifacts: {artifacts.Count}";
     }
 
     //////////////////////////////////////

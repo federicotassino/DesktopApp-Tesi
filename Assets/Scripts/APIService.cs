@@ -286,6 +286,31 @@ public class APIService
         }
     }
 
+    // =========================
+    // DELETE CONTAINER
+    // =========================
+    public async Task<bool> DeleteContainerAsync(int id)
+    {
+        using var request =
+            UnityWebRequest.Delete($"{shelfUrl}/{id}");
+
+        request.downloadHandler = new DownloadHandlerBuffer();
+
+        var operation = request.SendWebRequest();
+
+        while (!operation.isDone)
+            await Task.Yield();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(request.error);
+            Debug.LogError(request.downloadHandler.text);
+            return false;
+        }
+
+        return true;
+    }
+
 
     //TODO: DA ELIMINARE
     /*DB dB;
