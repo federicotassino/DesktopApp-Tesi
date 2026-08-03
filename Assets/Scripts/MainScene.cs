@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,13 +18,12 @@ public class MainScene : MonoBehaviour
     public TMP_InputField newArtifact_shUnit;
     //public Button addButton;
     public TMP_Text emptyFieldsText;
-    public GameObject ShelfPage;
-    public TMP_InputField shelfNameTMP;
-    public TMP_InputField shelfParentIdTMP;
+    public GameObject containerPage;
+    public TMP_InputField containerNameTMP;
 
     private List<Artifact> artifacts = new();
     private Artifact selectedArtifact;
-    private string confirmText = "Eliminare l'elemento ";
+    private string confirmText = "Delete the element ";
 
     [Header("Hierarchy")]
     public GameObject hierarchyPage;
@@ -35,11 +31,11 @@ public class MainScene : MonoBehaviour
     public GameObject treeNodePrefab;
     public GameObject nodeMenu;
     public GameObject indentPrefab;
-    public GameObject createShelfButton;
+    public GameObject createContainerButton;
     public GameObject createArtifactButton;
 
 
-    private StorageContainer selectedShelf;
+    private StorageContainer selectedContainer;
 
     // Start is called before the first frame update
     async void Start()
@@ -49,8 +45,9 @@ public class MainScene : MonoBehaviour
         artifactPage.SetActive(false);
         confirmDialog.SetActive(false);
         emptyFieldsText.enabled = false;
-        ShelfPage.SetActive(false);
+        containerPage.SetActive(false);
         hierarchyPage.SetActive(false);
+        nodeMenu.SetActive(false);
 
         apiService = new APIService();
 
@@ -61,9 +58,9 @@ public class MainScene : MonoBehaviour
             return;
         }
 
-        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        createContainerButton.GetComponent<Button>().onClick.AddListener(() =>
         {
-            OnCreateShelf();
+            OnCreateContainer();
         });
 
         createArtifactButton.GetComponent<Button>().onClick.AddListener(() =>
@@ -113,7 +110,7 @@ public class MainScene : MonoBehaviour
         scrollView.SetActive(true);
         topBar.SetActive(true);
         artifactPage.SetActive(false);
-        ShelfPage.SetActive(false);
+        containerPage.SetActive(false);
 
         //var artifacts = apiService.GetAllArtifacts();
         artifacts.Clear();
@@ -130,27 +127,27 @@ public class MainScene : MonoBehaviour
     public void OnCreateArtifactButtonClickFromHierarchy()
     {
         Debug.Log("-----OnAddArtifactButtonClickFromHierarchy-----");
-        AddArtifactAsync(selectedShelf.id);
+        AddArtifactAsync(selectedContainer.id);
     }
 
-    public async void AddArtifactAsync(int _shelfID)
+    public async void AddArtifactAsync(int _containerID)
     {
         Debug.Log("-----OnAddArtifactButtonClick-----");
         hierarchyPage.SetActive(false);
         scrollView.SetActive(false);
         topBar.SetActive(false);
         artifactPage.SetActive(true);
-        ShelfPage.SetActive(false);
+        containerPage.SetActive(false);
 
         if (newArtifact_name.text != "" && newArtifact_description.text != "")
         {
-            int shelfID = _shelfID;
+            int containerID = _containerID;
             Artifact newArtifact = new Artifact
             {
                 name = newArtifact_name.text,
                 textDescription = newArtifact_description.text,
-                shelvingUnit = shelfID,
-                lastShelvingUnit = shelfID
+                shelvingUnit = containerID,
+                lastShelvingUnit = containerID
             };
 
             Artifact created = await apiService.CreateArtifactAsync(newArtifact);
@@ -190,17 +187,17 @@ public class MainScene : MonoBehaviour
         scrollView.SetActive(false);
         topBar.SetActive(false);
         artifactPage.SetActive(true);
-        ShelfPage.SetActive(false);
+        containerPage.SetActive(false);
     }
 
-    public void OnAddShelfButtonClick()
+    public void OnAddContainerButtonClick()
     {
-        Debug.Log("-----OnAddShelfButtonClick-----");
+        Debug.Log("-----OnAddContainerButtonClick-----");
         hierarchyPage.SetActive(false);
         scrollView.SetActive(false);
         topBar.SetActive(false);
         artifactPage.SetActive(false);
-        ShelfPage.SetActive(true);
+        containerPage.SetActive(true);
     }
 
 
@@ -211,7 +208,7 @@ public class MainScene : MonoBehaviour
         scrollView.SetActive(false);
         topBar.SetActive(false);
         artifactPage.SetActive(false);
-        ShelfPage.SetActive(false);
+        containerPage.SetActive(false);
 
         List<StorageContainer> shelves =
             await apiService.GetAllShelvesAsync();
@@ -232,17 +229,17 @@ public class MainScene : MonoBehaviour
         nodeMenu.SetActive(false);
     }
 
-    public void OnAddShelfFromHierarchy()
+    public void OnAddContainerFromHierarchy()
     {
-        Debug.Log("-----OnAddShelfFromHierarchy-----");
+        Debug.Log("-----OnAddContainerFromHierarchy-----");
         nodeMenu.SetActive(false);
 
-        OnAddShelfButtonClick();
+        OnAddContainerButtonClick();
 
-        createShelfButton.GetComponent<Button>().onClick.RemoveAllListeners();
-        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        createContainerButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createContainerButton.GetComponent<Button>().onClick.AddListener(() =>
         {
-            OnCreateShelfFromHierarchy();
+            OnCreateContainerFromHierarchy();
         });
     }
 
@@ -275,7 +272,7 @@ public class MainScene : MonoBehaviour
         }
     }
 
-    private void CreateNode(StorageContainer shelf, List<StorageContainer> allShelves, int depth)
+    private void CreateNode(StorageContainer container, List<StorageContainer> allShelves, int depth)
     {
         GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
 
@@ -289,27 +286,27 @@ public class MainScene : MonoBehaviour
         }
 
         // Testo
-        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = $"{shelf.name} ({shelf.id})";
+        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = $"{container.name} ({container.id})";
 
         // Click
         node.GetComponentsInChildren<Button>().FirstOrDefault().onClick.AddListener(() =>
         {
-            OnShelfNodeClicked(shelf);
+            OnContainerNodeClicked(container);
         });
 
         // Figli
-        foreach (StorageContainer child in allShelves.Where(x => x.parentShelfId == shelf.id))
+        foreach (StorageContainer child in allShelves.Where(x => x.parentShelfId == container.id))
         {
             CreateNode(child, allShelves, depth + 1);
         }
     }
 
-    private void OnShelfNodeClicked(StorageContainer shelf)
+    private void OnContainerNodeClicked(StorageContainer container)
     {
-        selectedShelf = shelf;
+        selectedContainer = container;
 
         nodeMenu.SetActive(true);
-        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = shelf.name;
+        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = container.name;
     }
 
     //////////////////////////////////////
@@ -415,9 +412,9 @@ public class MainScene : MonoBehaviour
         //ToConsole(artifacts.ToString());
     }
 
-    public void OnCreateShelf()
+    public void OnCreateContainer()
     {
-        string name = shelfNameTMP.text;
+        string name = containerNameTMP.text;
             //ShelfPage.transform
             //.Find("Name_txt")
             //.GetComponent<TMP_InputField>()
@@ -441,14 +438,14 @@ public class MainScene : MonoBehaviour
         ResetShelfUI();
     }
 
-    public void OnCreateShelfFromHierarchy()
+    public void OnCreateContainerFromHierarchy()
     {
-        string name = shelfNameTMP.text;
+        string name = containerNameTMP.text;
         //ShelfPage.transform
         //.Find("Name_txt")
         //.GetComponent<TMP_InputField>()
         //.text
-        int parentId = selectedShelf != null ? selectedShelf.id : -1;
+        int parentId = selectedContainer != null ? selectedContainer.id : -1;
 
         StorageContainer dto = new StorageContainer
         {
@@ -467,18 +464,17 @@ public class MainScene : MonoBehaviour
 
         ResetShelfUI();
 
-        createShelfButton.GetComponent<Button>().onClick.RemoveAllListeners();
-        createShelfButton.GetComponent<Button>().onClick.AddListener(() =>
+        createContainerButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        createContainerButton.GetComponent<Button>().onClick.AddListener(() =>
         {
-            OnCreateShelf();
+            OnCreateContainer();
         });
     }
 
     private void ResetShelfUI()
     {
-        shelfNameTMP.text = "";
-        shelfParentIdTMP.text = "";
-        ShelfPage.SetActive(false);
+        containerNameTMP.text = "";
+        containerPage.SetActive(false);
         scrollView.SetActive(true);
         topBar.SetActive(true);
     }
