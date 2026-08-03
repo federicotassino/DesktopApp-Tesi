@@ -251,6 +251,41 @@ public class APIService
         );
     }
 
+    // =========================
+    // GET ARTIFACTS IN CONTAINER
+    // =========================
+    public async Task<List<Artifact>> GetArtifactsByContainerIdAsync(int containerId)
+    {
+        string url = $"{baseUrl}/container/{containerId}";
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            var operation = request.SendWebRequest();
+
+            while (!operation.isDone)
+                await Task.Yield();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Errore: {request.error}");
+                Debug.LogError($"Response Code: {request.responseCode}");
+                Debug.LogError($"URL: {request.url}");
+                Debug.LogError(request.downloadHandler.text);
+
+                return null;
+            }
+
+            string json = request.downloadHandler.text;
+
+            string wrappedJson = "{ \"items\": " + json + " }";
+
+            ArtifactListWrapper result =
+                JsonUtility.FromJson<ArtifactListWrapper>(wrappedJson);
+
+            return result.items;
+        }
+    }
+
 
     //TODO: DA ELIMINARE
     /*DB dB;

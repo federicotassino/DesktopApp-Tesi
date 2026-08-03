@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -324,12 +325,15 @@ public class MainScene : MonoBehaviour
         }
     }
 
-    private void OnContainerNodeClicked(StorageContainer container)
+    private async void OnContainerNodeClicked(StorageContainer container)
     {
         selectedContainer = container;
 
         nodeMenu.SetActive(true);
-        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = container.name;
+        List<Artifact> artifacts = await GetArtifactsInContainer(container);
+
+        nodeMenu.transform.Find("Text").GetComponent<TMP_Text>().text = 
+            $"{container.name} ({container.id})\nNumber of Artifacts: {artifacts.Count}";
     }
 
     //////////////////////////////////////
@@ -355,6 +359,11 @@ public class MainScene : MonoBehaviour
         {
             OnDeleteArtifactAsync(artifact.id);
         });
+    }
+
+    public async Task<List<Artifact>> GetArtifactsInContainer(StorageContainer container)
+    {
+        return await apiService.GetArtifactsByContainerIdAsync(container.id);
     }
 
     public async void OnDeleteArtifactAsync(int id)
