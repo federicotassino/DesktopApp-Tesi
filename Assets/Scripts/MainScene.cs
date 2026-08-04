@@ -23,9 +23,11 @@ public class MainScene : MonoBehaviour
     public GameObject containerPage;
     public TMP_InputField containerNameTMP;
 
-    private List<Artifact> artifacts = new();
-    private Artifact selectedArtifact;
-    private string confirmText = "Delete the element ";
+    [Header("Header Buttons")]
+    public GameObject getAllArtifactsButton;
+    public GameObject hierarchyButton;
+    public GameObject addContainerButton;
+    public GameObject addArtifactButton;
 
     [Header("Hierarchy")]
     public GameObject hierarchyPage;
@@ -44,6 +46,9 @@ public class MainScene : MonoBehaviour
     public TMP_InputField d_input;
     public TMP_Text errorText;
 
+    private List<Artifact> artifacts = new();
+    private Artifact selectedArtifact;
+    private string confirmText = "Delete the element ";
 
     private StorageContainer selectedContainer;
 
