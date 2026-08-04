@@ -74,6 +74,7 @@ public class MainScene : MonoBehaviour
             Debug.LogError("Artifacts null!");
             return;
         }
+        getAllArtifactsButton.GetComponent<Button>().Select();
 
         createContainerButton.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -128,6 +129,8 @@ public class MainScene : MonoBehaviour
         topBar.SetActive(true);
         artifactPage.SetActive(false);
         containerPage.SetActive(false);
+
+        getAllArtifactsButton.GetComponent<Button>().Select();
 
         //var artifacts = apiService.GetAllArtifacts();
         artifacts.Clear();
@@ -205,6 +208,8 @@ public class MainScene : MonoBehaviour
         topBar.SetActive(false);
         artifactPage.SetActive(true);
         containerPage.SetActive(false);
+
+        addArtifactButton.GetComponent<Button>().Select();
     }
 
     public void OnAddContainerButtonClick()
@@ -215,6 +220,8 @@ public class MainScene : MonoBehaviour
         topBar.SetActive(false);
         artifactPage.SetActive(false);
         containerPage.SetActive(true);
+
+        addContainerButton.GetComponent<Button>().Select();
 
         isRoomToggle.isOn = false;
         roomSizeInputFields.SetActive(false);
@@ -232,6 +239,8 @@ public class MainScene : MonoBehaviour
         topBar.SetActive(false);
         artifactPage.SetActive(false);
         containerPage.SetActive(false);
+
+        hierarchyButton.GetComponent<Button>().Select();
 
         List<StorageContainer> shelves =
             await apiService.GetAllShelvesAsync();
