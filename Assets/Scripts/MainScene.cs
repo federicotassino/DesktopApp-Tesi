@@ -358,6 +358,10 @@ public class MainScene : MonoBehaviour
         // Testo
         node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = $"{container.name} ({container.id})";
 
+        //IsRoom
+        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "IconShelving")?.gameObject.SetActive(!container.isRoom);
+        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "IconRoom")?.gameObject.SetActive(container.isRoom);
+
         // Click
         node.GetComponentsInChildren<Button>().FirstOrDefault().onClick.AddListener(() =>
         {
