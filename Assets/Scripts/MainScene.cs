@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -336,13 +337,225 @@ public class MainScene : MonoBehaviour
         foreach (Transform child in hierarchyContent)
             Destroy(child.gameObject);
 
-        foreach (StorageContainer root in shelves.Where(x => x.parentShelfId == -1))
+        List<StorageContainer> roots = shelves
+            .Where(x => x.parentShelfId == -1)
+            .ToList();
+
+        for (int i = 0; i < roots.Count; i++)
         {
-            CreateNode(root, shelves, 0);
+            CreateNode(
+                roots[i],
+                shelves,
+                0,
+                i == roots.Count - 1
+            );
         }
     }
 
-    private void CreateNode(StorageContainer container, List<StorageContainer> allShelves, int depth)
+
+    private void BuildHierarchy2(List<StorageContainer> shelves)
+    {
+        foreach (Transform child in hierarchyContent)
+            Destroy(child.gameObject);
+
+        foreach (StorageContainer root in shelves.Where(x => x.parentShelfId == -1))
+        {
+            //CreateNode(root, shelves, 0);
+        }
+    }
+
+    private void CreateNode(
+    StorageContainer container,
+    List<StorageContainer> allShelves,
+    int depth,
+    bool isLastSibling)
+    {
+        GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
+
+        // =====================================================
+        // ANTENATI
+        // =====================================================
+
+        List<StorageContainer> ancestors = new List<StorageContainer>();
+
+        StorageContainer current = container;
+
+        while (current.parentShelfId != -1)
+        {
+            StorageContainer parent = allShelves
+                .FirstOrDefault(x => x.id == current.parentShelfId);
+
+            if (parent == null)
+                break;
+
+            ancestors.Insert(0, parent);
+            current = parent;
+        }
+
+        // =====================================================
+        // INDENT
+        // =====================================================
+
+        for (int i = 0; i < depth; i++)
+        {
+            GameObject indent = Instantiate(indentPrefab, node.transform);
+
+            // Un indent per livello
+            indent.transform.SetSiblingIndex(i);
+
+            Transform orizontalLine = indent
+                .GetComponentsInChildren<Transform>(true)
+                .FirstOrDefault(x => x.name == "OrizontalLine");
+
+            Transform verticalLine = indent
+                .GetComponentsInChildren<Transform>(true)
+                .FirstOrDefault(x => x.name == "VerticalLine");
+
+            Transform angle = indent
+                .GetComponentsInChildren<Transform>(true)
+                .FirstOrDefault(x => x.name == "Angle");
+
+            // =================================================
+            // RESET
+            // =================================================
+
+            orizontalLine?.gameObject.SetActive(false);
+            verticalLine?.gameObject.SetActive(false);
+            angle?.gameObject.SetActive(false);
+
+            // =================================================
+            // ULTIMO LIVELLO
+            // =================================================
+
+            if (i == depth - 1)
+            {
+                if (isLastSibling)
+                {
+                    // └──
+                    angle?.gameObject.SetActive(true);
+                    orizontalLine?.gameObject.SetActive(false);
+                    verticalLine?.gameObject.SetActive(false);
+                }
+                else
+                {
+                    // ├──
+                    angle?.gameObject.SetActive(false);
+                    orizontalLine?.gameObject.SetActive(true);
+                    verticalLine?.gameObject.SetActive(true);
+                }
+
+                continue;
+            }
+
+            // =================================================
+            // LIVELLO DI UN ANTENATO
+            // =================================================
+
+            if (i >= ancestors.Count)
+                continue;
+
+            StorageContainer ancestor = ancestors[i];
+
+            // -------------------------------------------------
+            // Troviamo il ramo che stiamo seguendo.
+            //
+            // Esempio:
+            //
+            // A
+            // ├── A1
+            // │   └── A11
+            // └── A2
+            //
+            // Per A11, a livello A il branch è A1.
+            // -------------------------------------------------
+
+            StorageContainer branch = container;
+
+            while (branch != null &&
+                   branch.parentShelfId != ancestor.id)
+            {
+                branch = allShelves
+                    .FirstOrDefault(x => x.id == branch.parentShelfId);
+            }
+
+            if (branch == null)
+                continue;
+
+            // -------------------------------------------------
+            // Figli diretti dell'antenato
+            // -------------------------------------------------
+
+            List<StorageContainer> ancestorChildren = allShelves
+                .Where(x => x.parentShelfId == ancestor.id)
+                .ToList();
+
+            int branchIndex = ancestorChildren.FindIndex(
+                x => x.id == branch.id
+            );
+
+            // -------------------------------------------------
+            // Se dopo il branch corrente c'è un fratello,
+            // dobbiamo continuare la linea verticale.
+            // -------------------------------------------------
+
+            bool branchHasNextSibling =
+                branchIndex >= 0 &&
+                branchIndex < ancestorChildren.Count - 1;
+
+            verticalLine?.gameObject.SetActive(branchHasNextSibling);
+        }
+
+        // =====================================================
+        // LABEL
+        // =====================================================
+
+        node.GetComponentsInChildren<TMP_Text>(true)
+            .FirstOrDefault(x => x.name == "Label")
+            ?.SetText($"{container.name} ({container.id})");
+
+        // =====================================================
+        // ICON
+        // =====================================================
+
+        node.GetComponentsInChildren<Transform>(true)
+            .FirstOrDefault(x => x.name == "IconShelving")
+            ?.gameObject.SetActive(!container.isRoom);
+
+        node.GetComponentsInChildren<Transform>(true)
+            .FirstOrDefault(x => x.name == "IconRoom")
+            ?.gameObject.SetActive(container.isRoom);
+
+        // =====================================================
+        // BUTTON
+        // =====================================================
+
+        node.GetComponentsInChildren<Button>(true)
+            .FirstOrDefault()
+            ?.onClick.AddListener(() =>
+            {
+                OnContainerNodeClicked(container);
+            });
+
+        // =====================================================
+        // FIGLI
+        // =====================================================
+
+        List<StorageContainer> children = allShelves
+            .Where(x => x.parentShelfId == container.id)
+            .ToList();
+
+        for (int i = 0; i < children.Count; i++)
+        {
+            CreateNode(
+                children[i],
+                allShelves,
+                depth + 1,
+                i == children.Count - 1
+            );
+        }
+    }
+
+    private void CreateNode2(StorageContainer container, List<StorageContainer> allShelves, int depth)
     {
         GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
 
@@ -353,6 +566,19 @@ public class MainScene : MonoBehaviour
 
             // lo mette prima degli altri elementi
             indent.transform.SetSiblingIndex(0);
+
+            if (i == depth - 1)
+            {
+                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Angle")?.gameObject.SetActive(true);
+                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Line")?.gameObject.SetActive(false);
+            }
+            else
+            {
+                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Angle")?.gameObject.SetActive(false);
+                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Line")?.gameObject.SetActive(true);
+            }
+
+               
         }
 
         // Testo
@@ -371,7 +597,7 @@ public class MainScene : MonoBehaviour
         // Figli
         foreach (StorageContainer child in allShelves.Where(x => x.parentShelfId == container.id))
         {
-            CreateNode(child, allShelves, depth + 1);
+            //CreateNode(child, allShelves, depth + 1);
         }
     }
 
