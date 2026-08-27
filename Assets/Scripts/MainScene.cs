@@ -352,23 +352,7 @@ public class MainScene : MonoBehaviour
         }
     }
 
-
-    private void BuildHierarchy2(List<StorageContainer> shelves)
-    {
-        foreach (Transform child in hierarchyContent)
-            Destroy(child.gameObject);
-
-        foreach (StorageContainer root in shelves.Where(x => x.parentShelfId == -1))
-        {
-            //CreateNode(root, shelves, 0);
-        }
-    }
-
-    private void CreateNode(
-    StorageContainer container,
-    List<StorageContainer> allShelves,
-    int depth,
-    bool isLastSibling)
+    private void CreateNode(StorageContainer container, List<StorageContainer> allShelves, int depth, bool isLastSibling)
     {
         GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
 
@@ -382,8 +366,7 @@ public class MainScene : MonoBehaviour
 
         while (current.parentShelfId != -1)
         {
-            StorageContainer parent = allShelves
-                .FirstOrDefault(x => x.id == current.parentShelfId);
+            StorageContainer parent = allShelves.FirstOrDefault(x => x.id == current.parentShelfId);
 
             if (parent == null)
                 break;
@@ -403,17 +386,11 @@ public class MainScene : MonoBehaviour
             // Un indent per livello
             indent.transform.SetSiblingIndex(i);
 
-            Transform orizontalLine = indent
-                .GetComponentsInChildren<Transform>(true)
-                .FirstOrDefault(x => x.name == "OrizontalLine");
+            Transform orizontalLine = indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "OrizontalLine");
 
-            Transform verticalLine = indent
-                .GetComponentsInChildren<Transform>(true)
-                .FirstOrDefault(x => x.name == "VerticalLine");
+            Transform verticalLine = indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "VerticalLine");
 
-            Transform angle = indent
-                .GetComponentsInChildren<Transform>(true)
-                .FirstOrDefault(x => x.name == "Angle");
+            Transform angle = indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "Angle");
 
             // =================================================
             // RESET
@@ -474,8 +451,7 @@ public class MainScene : MonoBehaviour
             while (branch != null &&
                    branch.parentShelfId != ancestor.id)
             {
-                branch = allShelves
-                    .FirstOrDefault(x => x.id == branch.parentShelfId);
+                branch = allShelves.FirstOrDefault(x => x.id == branch.parentShelfId);
             }
 
             if (branch == null)
@@ -509,29 +485,22 @@ public class MainScene : MonoBehaviour
         // LABEL
         // =====================================================
 
-        node.GetComponentsInChildren<TMP_Text>(true)
-            .FirstOrDefault(x => x.name == "Label")
-            ?.SetText($"{container.name} ({container.id})");
+        node.GetComponentsInChildren<TMP_Text>(true).FirstOrDefault(x => x.name == "Label")?.SetText($"{container.name} ({container.id})");
 
         // =====================================================
         // ICON
         // =====================================================
 
-        node.GetComponentsInChildren<Transform>(true)
-            .FirstOrDefault(x => x.name == "IconShelving")
-            ?.gameObject.SetActive(!container.isRoom);
+        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "IconShelving")?.gameObject.SetActive(!container.isRoom);
 
-        node.GetComponentsInChildren<Transform>(true)
-            .FirstOrDefault(x => x.name == "IconRoom")
-            ?.gameObject.SetActive(container.isRoom);
+        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "IconRoom")?.gameObject.SetActive(container.isRoom);
 
         // =====================================================
         // BUTTON
         // =====================================================
 
         node.GetComponentsInChildren<Button>(true)
-            .FirstOrDefault()
-            ?.onClick.AddListener(() =>
+            .FirstOrDefault()?.onClick.AddListener(() =>
             {
                 OnContainerNodeClicked(container);
             });
@@ -546,58 +515,8 @@ public class MainScene : MonoBehaviour
 
         for (int i = 0; i < children.Count; i++)
         {
-            CreateNode(
-                children[i],
-                allShelves,
-                depth + 1,
-                i == children.Count - 1
+            CreateNode(children[i], allShelves, depth + 1, i == children.Count - 1
             );
-        }
-    }
-
-    private void CreateNode2(StorageContainer container, List<StorageContainer> allShelves, int depth)
-    {
-        GameObject node = Instantiate(treeNodePrefab, hierarchyContent);
-
-        // Aggiunge gli indent all'inizio
-        for (int i = 0; i < depth; i++)
-        {
-            GameObject indent = Instantiate(indentPrefab, node.transform);
-
-            // lo mette prima degli altri elementi
-            indent.transform.SetSiblingIndex(0);
-
-            if (i == depth - 1)
-            {
-                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Angle")?.gameObject.SetActive(true);
-                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Line")?.gameObject.SetActive(false);
-            }
-            else
-            {
-                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Angle")?.gameObject.SetActive(false);
-                indent.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "Line")?.gameObject.SetActive(true);
-            }
-
-               
-        }
-
-        // Testo
-        node.GetComponentsInChildren<TMP_Text>().FirstOrDefault(x => x.gameObject.name == "Label").text = $"{container.name} ({container.id})";
-
-        //IsRoom
-        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "IconShelving")?.gameObject.SetActive(!container.isRoom);
-        node.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.gameObject.name == "IconRoom")?.gameObject.SetActive(container.isRoom);
-
-        // Click
-        node.GetComponentsInChildren<Button>().FirstOrDefault().onClick.AddListener(() =>
-        {
-            OnContainerNodeClicked(container);
-        });
-
-        // Figli
-        foreach (StorageContainer child in allShelves.Where(x => x.parentShelfId == container.id))
-        {
-            //CreateNode(child, allShelves, depth + 1);
         }
     }
 
