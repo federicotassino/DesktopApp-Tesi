@@ -13,9 +13,9 @@ public class ListGetData : MonoBehaviour
     public List<Artifact> itemData = new List<Artifact>();
     public Image sourceImageName;
     public Image sourceImageUnit;
-    public Sprite downArrow;
-    public Sprite upArrow;
-    public Sprite noArrow;
+    public Sprite ascendingArrow;
+    public Sprite descendingArrow;
+    public Sprite neutralArrow;
 
 
     private bool naturalOrder = true;
@@ -106,17 +106,17 @@ public class ListGetData : MonoBehaviour
             naturalOrder = true;
             orderByShUnit = false;
 
-            sourceImageName.sprite = downArrow;
-            sourceImageUnit.sprite = noArrow;
+            sourceImageName.sprite = ascendingArrow;
+            sourceImageUnit.sprite = neutralArrow;
         }
         else
         {
             naturalOrder = !naturalOrder;
 
             if(naturalOrder)
-                sourceImageName.sprite = downArrow;
+                sourceImageName.sprite = ascendingArrow;
             else
-                sourceImageName.sprite = upArrow;
+                sourceImageName.sprite = descendingArrow;
         }
 
         UpdateListView();
@@ -131,17 +131,17 @@ public class ListGetData : MonoBehaviour
             naturalOrder = true;
             orderByName = false;
 
-            sourceImageName.sprite = noArrow;
-            sourceImageUnit.sprite = downArrow;
+            sourceImageName.sprite = neutralArrow;
+            sourceImageUnit.sprite = ascendingArrow;
         }
         else
         {
             naturalOrder = !naturalOrder;
             
             if (naturalOrder)
-                sourceImageUnit.sprite = downArrow;
+                sourceImageUnit.sprite = ascendingArrow;
             else
-                sourceImageUnit.sprite = upArrow;
+                sourceImageUnit.sprite = descendingArrow;
         }
         
         UpdateListView();
